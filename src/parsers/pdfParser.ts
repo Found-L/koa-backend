@@ -1,3 +1,5 @@
+// src/parsers/pdfParser.ts
+
 import fs from 'fs/promises';
 import path from 'path';
 import { PDFDocument } from 'pdf-lib';

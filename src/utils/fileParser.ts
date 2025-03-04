@@ -1,7 +1,5 @@
 // src/utils/fileParser.ts
 import fs from 'fs/promises';
-import pdfParse from 'pdf-parse';
-import mammoth from 'mammoth';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
@@ -14,6 +12,9 @@ import { parseStringPromise } from 'xml2js';
 import epub from 'epub2';
 
 import { parsePdfFile } from '../parsers/pdfParser';  // 引入 pdf 解析方法
+import { parseWordFile } from '../parsers/docxParse'; // 导入 Word 解析方法
+import { parseTextFile } from '../parsers/txtParse'; // 导入 txt 解析方法
+
 
 import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
 
@@ -28,8 +29,8 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
 
         // 处理 TXT 文件
         if (mimeType === 'text/plain') {
-            result.content = await fs.readFile(filePath, 'utf-8');
-            return result;
+            const txtResult = await parseTextFile(filePath, mimeType); // 调用独立的 PDF 解析方法
+            return txtResult;
         }
 
         // 处理 PDF 文件
@@ -40,11 +41,8 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
 
         // 处理 DOCX 文件
         if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            const data = await fs.readFile(filePath);
-            const parsed = await mammoth.extractRawText({ buffer: data });
-            result.content = parsed.value;
-            console.log(parsed);
-            return result;
+            const docxResult = await parseWordFile(filePath, mimeType); // 调用独立的 PDF 解析方法
+            return docxResult;
         }
 
         // 处理 Markdown 文件
