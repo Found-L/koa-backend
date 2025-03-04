@@ -36,40 +36,51 @@ export async function parsePdfFile(filePath: string, mimeType: string): Promise<
       const page = await pdfData.getPage(i + 1); // 获取第 i+1 页
       const textContent = await page.getTextContent();
 
-      const lines: LineContent[] = [];
       let pageText = '';
+      const lines: LineContent[] = [];
 
-      let lastY: number | null = null; // ✅ 确保 lastY 有正确类型
+      // **1. 解析文本内容并按 Y 轴分组**
+      const textItems = textContent.items.map((item: any) => ({
+        text: item.str.trim(),
+        x: item.transform[4], // X 坐标
+        y: item.transform[5], // Y 坐标
+      }));
 
-      let currentLine: LineContent | null = null;
-      let lineNumber = 1;
+      // **2. 按 Y 轴（行）分组**
+      const lineGroups: { [key: number]: { x: number; text: string }[] } = {};
+      const threshold = 5; // 允许的 Y 轴偏差（避免因为微小误差导致分组错误）
 
-      textContent.items.forEach((item: any) => {
-        const text = item.str.trim();
+      textItems.forEach(({ text, x, y }) => {
         if (!text) return;
 
-        const y = item.transform[5]; // 获取 Y 坐标
+        // 找到是否已存在接近的 Y 轴行
+        const existingLineY = Object.keys(lineGroups)
+        .map(Number) // 将字符串数组转换为数字数组
+        .find((lineY) => Math.abs(lineY - y) < threshold);
 
-        if (lastY === null || Math.abs(lastY - y) > 5) {
-          // Y 轴差异较大，视为新的一行
-          if (currentLine) {
-            lines.push(currentLine);
-          }
-          currentLine = { lineNumber, text: '' };
-          lineNumber++;
+
+        if (existingLineY) {
+          lineGroups[existingLineY].push({ x, text });
+        } else {
+          lineGroups[y] = [{ x, text }];
         }
-
-        if (currentLine) {
-          currentLine.text += text + ' ';
-        }
-
-        lastY = y;
-        pageText += text + ' ';
       });
 
-      if (currentLine) {
-        lines.push(currentLine);
-      }
+      // **3. 处理每一行：按 X 坐标排序并拼接文本**
+      let lineNumber = 1;
+      Object.keys(lineGroups)
+        .map(Number) // 将字符串数组转换为数字数组
+        .sort((a, b) => b - a) // 🔥 按 Y 坐标降序排列
+        .forEach((lineY) => {
+          const line = lineGroups[lineY]
+            .sort((a, b) => a.x - b.x) // 按 X 坐标排序
+            .map((item) => item.text)
+            .join(' ');
+
+          lines.push({ lineNumber, text: line });
+          pageText += line + '\n';
+          lineNumber++;
+        });
 
       result.pages.push({
         pageNumber: i + 1,
