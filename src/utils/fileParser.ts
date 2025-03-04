@@ -33,12 +33,6 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
         }
 
         // 处理 PDF 文件
-        // if (mimeType === 'application/pdf') {
-        //     const data = await fs.readFile(filePath);
-        //     const pdfData = await pdfParse(data);
-        //     return pdfData.text;
-        // }
-        // 处理 PDF 文件
         if (mimeType === 'application/pdf') {
             const pdfResult = await parsePdfFile(filePath, mimeType); // 调用独立的 PDF 解析方法
             return pdfResult;
@@ -49,6 +43,7 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
             const data = await fs.readFile(filePath);
             const parsed = await mammoth.extractRawText({ buffer: data });
             result.content = parsed.value;
+            console.log(parsed);
             return result;
         }
 

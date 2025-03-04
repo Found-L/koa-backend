@@ -71,6 +71,7 @@ export async function parsePdfFile(filePath: string, mimeType: string): Promise<
 
       result.pages.push({
         pageNumber: i + 1,
+        text: pageText.trim(), // ✅ 存储整页文本内容
         lines,
       });
 
