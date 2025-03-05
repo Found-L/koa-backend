@@ -42,14 +42,20 @@ src/
 
 ### 文件解析相关
 
-- `pdf-parse`：解析 PDF
-- `mammoth`：解析 DOCX
-- `xlsx`：解析 Excel
-- `xml2js`：解析 XML
-- `csv-parse`：解析 CSV
-- `remark-parse` & `remark-stringify`：解析 Markdown
-- `mailparser`：解析 EML 和 MSG
-- `epub2`：解析 EPUB
+- `textract`：解析 文档
+
+文件格式 是否支持
+.txt ✅
+.docx ✅
+.xlsx ✅
+.pptx ✅
+.csv ✅
+.pdf（文本版） ✅
+.pdf（扫描版） ✅（需要 Tesseract OCR）
+.eml ✅
+.html ✅
+.xml ❌（推荐 fast-xml-parser）
+.epub ❌（推荐 epub-parser）
 
 ## 安装与运行
 

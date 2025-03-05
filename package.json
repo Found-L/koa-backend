@@ -25,6 +25,7 @@
     "pdfjs-dist": "^4.10.38",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
+    "textract": "^2.5.0",
     "unified": "^11.0.5",
     "xlsx": "^0.18.5",
     "xml2js": "^0.6.2"
@@ -43,6 +44,7 @@
     "@types/node": "^22.13.8",
     "@types/pdf-parse": "^1.1.4",
     "@types/pdfjs-dist": "^2.10.377",
+    "@types/textract": "^2.4.5",
     "@types/xml2js": "^0.4.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
