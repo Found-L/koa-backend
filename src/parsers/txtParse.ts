@@ -3,6 +3,8 @@
 
 import fs from 'fs/promises';
 import path from 'path';
+import iconv from 'iconv-lite';
+import chardet from 'chardet';
 
 export async function parseTextFile(filePath: string, mimeType: string): Promise<ParsedContent> {
   try {
@@ -10,12 +12,19 @@ export async function parseTextFile(filePath: string, mimeType: string): Promise
       throw new Error('Unsupported file type for text parsing');
     }
 
-    const textFileName = path.basename(filePath);
-    const fileContent = await fs.readFile(filePath, 'utf-8');
+    const textFileName = path.basename(filePath.replace(/^.*?_(.*)$/, '$1'));
+    const fileBuffer = await fs.readFile(filePath);
 
-    // 将文本内容分割成页面，假设每50行作为一页
+    // 检测编码
+    const detectedEncoding = chardet.detect(fileBuffer) || 'utf-8';
+    console.log(`Detected Encoding: ${detectedEncoding}`);
+
+    // 转换为 utf-8
+    const fileContent = iconv.decode(fileBuffer, detectedEncoding);
+
+    // 分页逻辑
     const lines = fileContent.split('\n');
-    const linesPerPage = 50; // 每页50行，你可以根据需求调整
+    const linesPerPage = 50;
     let pageNumber = 1;
     let currentPageText = '';
     let currentPageLines: LineContent[] = [];
@@ -31,7 +40,6 @@ export async function parseTextFile(filePath: string, mimeType: string): Promise
       currentPageLines.push(lineContent);
       currentPageText += line.trim() + ' ';
 
-      // 每50行保存为一页
       if (currentPageLines.length >= linesPerPage || index === lines.length - 1) {
         pages.push({
           pageNumber,
@@ -48,7 +56,7 @@ export async function parseTextFile(filePath: string, mimeType: string): Promise
     return {
       fileName: textFileName,
       mimeType,
-      pages: pages,
+      pages,
       content: fileContent,
     };
   } catch (error) {

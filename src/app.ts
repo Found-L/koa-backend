@@ -12,7 +12,7 @@ const app = new Koa();
 
 // 允许跨域
 app.use(cors({
-  origin: 'http://localhost:5173', // 允许的前端域名
+  origin: 'http://192.168.88.198:5173', // 允许的前端域名
   credentials: true, // 允许携带 Cookie
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // 允许的请求方法
   allowHeaders: ['Content-Type', 'Authorization'], // 允许的请求头

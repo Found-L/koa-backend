@@ -6,6 +6,7 @@ import multer from '@koa/multer';
 const allowedMimeTypes = [
     'text/plain', // TXT
     'text/markdown', // MARKDOWN, MD
+    // 'application/octet-stream', // 二进制流格式  (一些特殊格式支持上传)  例如markdown 格式不识别
     // 'application/vnd.ms-excel', // XLS
     // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
     'application/pdf', // PDF
@@ -30,12 +31,18 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/'); // 文件保存的目录
     },
     filename: function (req, file, cb) {
-        cb(null, `${Date.now()}_${file.originalname}`); // 设置文件名
+        cb(null, `${Date.now()}_${Buffer.from(file.originalname, "latin1").toString('utf-8')}`); // 设置文件名
     }
 });
 
 // 过滤文件类型
 const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
+
+    // 手动修正 Markdown 文件的 MIME 类型
+    if (file.originalname.endsWith('.md') && file.mimetype === 'application/octet-stream') {
+        file.mimetype = 'text/markdown';
+    }
+
     if (allowedMimeTypes.includes(file.mimetype)) {
         cb(null, true); // 允许上传
     } else {

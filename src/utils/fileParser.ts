@@ -14,6 +14,7 @@ import epub from 'epub2';
 import { parsePdfFile } from '../parsers/pdfParser';  // 引入 pdf 解析方法
 import { parseWordFile } from '../parsers/docxParse'; // 导入 Word 解析方法
 import { parseTextFile } from '../parsers/txtParse'; // 导入 txt 解析方法
+import { parseMarkdownFile } from '../parsers/mdParse'; // 导入 Markdown 解析方法
 
 
 import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
@@ -21,7 +22,7 @@ import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
 export async function parseFile(filePath: string, mimeType: string): Promise<ParsedContent | string> {
     try {
         const result: ParsedContent = {
-            fileName: filePath.split('/').pop()!, // Get the file name from the path
+            fileName: filePath.replace(/^.*?_(.*)$/, '$1'), // Get the file name from the path
             mimeType,
             pages: [],
             content: ''
@@ -46,15 +47,18 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
         }
 
         // 处理 Markdown 文件
-        // if (mimeType === 'text/markdown') {
-        if (mimeType === 'application/octet-stream') {
-            const markdownContent = await fs.readFile(filePath, 'utf-8');
-            const parsed = await unified()
-                .use(remarkParse)
-                .use(remarkStringify)
-                .process(markdownContent);
-            result.content = parsed.toString();
-            return result;
+        if (mimeType === 'text/markdown') {
+        // if (mimeType === 'application/octet-stream') {
+            // const markdownContent = await fs.readFile(filePath, 'utf-8');
+            // const parsed = await unified()
+            //     .use(remarkParse)
+            //     .use(remarkStringify)
+            //     .process(markdownContent);
+            // result.content = parsed.toString();
+            // return result;
+
+            const mdResult = await parseMarkdownFile(filePath, mimeType); // 调用独立的 PDF 解析方法
+            return mdResult;
         }
 
         // // 处理 HTML 文件
