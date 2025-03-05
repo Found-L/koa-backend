@@ -18,11 +18,10 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
 
     // 提取 DOCX 文件中的文本内容和表格
     let content = '';
-    const tables: TableContent[] = [];
 
     // 遍历文档内容
     docx.officeDocument.content('w\\:t, w\\:tbl').each((index: number, node: any) => {
-      if (node.name === 'w:t') {
+      if (node.name === 'w:t' && !isInsideTable(node)) {
         // 处理文本节点
         if (node.children && node.children.length > 0 && node.children[0].data) {
           content += node.children[0].data + '\n'; // 提取文本内容
@@ -61,7 +60,10 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
             table.push({ cells: row }); // 将行添加到表格中
           }
         });
-        tables.push({ rows: table }); // 将表格添加到表格列表中
+
+        // 将表格转换为 Markdown 格式并插入到 content 中
+        const markdownTable = convertTableToMarkdown(table);
+        content += markdownTable + '\n';
       }
     });
 
@@ -115,7 +117,6 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
       mimeType,
       pages: pages,
       content: content,
-      tables: tables, // 包含表格内容
     };
   } catch (error) {
     console.error('解析 Word 文件时出错:', error);
@@ -123,35 +124,54 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
   }
 }
 
-// 定义表格相关的类型
+/**
+ * 判断节点是否在表格内
+ * @param node 当前节点
+ * @returns 是否在表格内
+ */
+function isInsideTable(node: any): boolean {
+  let parent = node.parent;
+  while (parent) {
+    if (parent.name === 'w:tbl') {
+      return true; // 如果父节点是表格，返回 true
+    }
+    parent = parent.parent;
+  }
+  return false; // 否则返回 false
+}
+
+/**
+ * 将表格数据转换为 Markdown 格式
+ * @param table 表格数据
+ * @returns Markdown 格式的表格字符串
+ */
+function convertTableToMarkdown(table: TableRowContent[]): string {
+  let markdownTable = '';
+
+  // 生成表头
+  if (table.length > 0) {
+    const header = table[0].cells.map(cell => cell.text).join(' | ');
+    markdownTable += `| ${header} |\n`;
+
+    // 生成分隔线
+    const separator = table[0].cells.map(() => '---').join(' | ');
+    markdownTable += `| ${separator} |\n`;
+
+    // 生成表格内容
+    for (let i = 1; i < table.length; i++) {
+      const row = table[i].cells.map(cell => cell.text).join(' | ');
+      markdownTable += `| ${row} |\n`;
+    }
+  }
+
+  return markdownTable;
+}
+
+// 定义表格相关的类型（仅用于内部处理）
 interface TableCellContent {
   text: string;
 }
 
 interface TableRowContent {
   cells: TableCellContent[];
-}
-
-interface TableContent {
-  rows: TableRowContent[];
-}
-
-// 定义其他类型
-interface LineContent {
-  lineNumber: number;
-  text: string;
-}
-
-interface PageContent {
-  pageNumber: number;
-  text: string;
-  lines: LineContent[];
-}
-
-interface ParsedContent {
-  fileName: string;
-  mimeType: string;
-  pages: PageContent[];
-  content: string;
-  tables: TableContent[];
 }
