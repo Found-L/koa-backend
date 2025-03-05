@@ -49,14 +49,6 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
         // 处理 Markdown 文件
         if (mimeType === 'text/markdown') {
         // if (mimeType === 'application/octet-stream') {
-            // const markdownContent = await fs.readFile(filePath, 'utf-8');
-            // const parsed = await unified()
-            //     .use(remarkParse)
-            //     .use(remarkStringify)
-            //     .process(markdownContent);
-            // result.content = parsed.toString();
-            // return result;
-
             const mdResult = await parseMarkdownFile(filePath, mimeType); // 调用独立的 PDF 解析方法
             return mdResult;
         }
