@@ -3,6 +3,7 @@
   "dependencies": {
     "@koa/cors": "^5.0.0",
     "@koa/multer": "^3.0.2",
+    "@llamaindex/core": "^0.5.5",
     "@llamaindex/readers": "^2.0.5",
     "chardet": "^2.1.0",
     "cheerio": "^1.0.0",
@@ -16,6 +17,7 @@
     "koa-logger": "^3.2.1",
     "koa-router": "^13.0.1",
     "koa-static": "^5.0.0",
+    "llamaindex": "^0.9.6",
     "mailparser": "^3.7.2",
     "mammoth": "^1.9.0",
     "mime-types": "^2.1.35",
