@@ -1,7 +1,6 @@
 // src/parsers/htmlParse.ts
 
 import fs from 'fs/promises';
-import path from 'path';
 import * as cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import chardet from 'chardet';

@@ -2,7 +2,6 @@
 
 import fs from 'fs/promises';
 import mammoth from 'mammoth';
-import path from 'path';
 
 export async function parseWordFile(filePath: string, mimeType: string, linesPerPage: number = 50): Promise<ParsedContent> {
   try {

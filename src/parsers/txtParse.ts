@@ -2,7 +2,6 @@
 // src/parsers/txtParse.ts
 
 import fs from 'fs/promises';
-import path from 'path';
 import iconv from 'iconv-lite';
 import chardet from 'chardet';
 

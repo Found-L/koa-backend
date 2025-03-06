@@ -1,6 +1,5 @@
 // src/parsers/docxParse.ts
 
-import path from 'path';
 import docx4js from 'docx4js';
 
 export async function parseWordFile(filePath: string, mimeType: string, linesPerPage: number = 50): Promise<ParsedContent> {

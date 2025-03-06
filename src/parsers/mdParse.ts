@@ -1,7 +1,6 @@
 // src/parsers/docxParse.ts
 
 import fs from 'fs/promises';
-import path from 'path';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
