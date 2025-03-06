@@ -17,7 +17,7 @@
 
 // src/controllers/fileUploadController.ts
 import Koa from 'koa';
-import { parseFile } from '../utils/fileParser';
+import { parseFile } from '../services/fileUploadService';
 
 export const uploadFile = async (ctx: Koa.Context) => {
     const file = ctx.file as any; // `multer` 使用的是 `ctx.file`

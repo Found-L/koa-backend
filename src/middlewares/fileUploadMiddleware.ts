@@ -10,7 +10,7 @@ const allowedMimeTypes = [
     // 'application/vnd.ms-excel', // XLS
     // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
     'application/pdf', // PDF
-    // 'text/html', // HTML
+    'text/html', // HTML
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
     'application/msword', // DOC
     // 'application/vnd.ms-powerpoint', // PPT

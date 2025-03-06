@@ -1,5 +1,4 @@
 // src/parsers/pdfParser.ts
-
 import fs from 'fs/promises';
 import path from 'path';
 import { PDFDocument } from 'pdf-lib';
@@ -39,53 +38,22 @@ export async function parsePdfFile(filePath: string, mimeType: string): Promise<
       let pageText = '';
       const lines: LineContent[] = [];
 
-      // **1. 解析文本内容并按 Y 轴分组**
-      const textItems = textContent.items.map((item: any) => ({
-        text: item.str.trim(),
-        x: item.transform[4], // X 坐标
-        y: item.transform[5], // Y 坐标
-      }));
+      let lineNumber = 1;
 
-      // **2. 按 Y 轴（行）分组**
-      const lineGroups: { [key: number]: { x: number; text: string }[] } = {};
-      const threshold = 5; // 允许的 Y 轴偏差（避免因为微小误差导致分组错误）
-
-      textItems.forEach(({ text, x, y }) => {
-        if (!text) return;
-
-        // 找到是否已存在接近的 Y 轴行
-        const existingLineY = Object.keys(lineGroups)
-        .map(Number) // 将字符串数组转换为数字数组
-        .find((lineY) => Math.abs(lineY - y) < threshold);
-
-
-        if (existingLineY) {
-          lineGroups[existingLineY].push({ x, text });
-        } else {
-          lineGroups[y] = [{ x, text }];
+      // **1. 按顺序提取每一行的文本**
+      textContent.items.forEach((item: any) => {
+        const lineText = item.str.trim();
+        if (lineText) {
+          lines.push({ lineNumber, text: lineText });
+          pageText += lineText + ' ';
+          lineNumber++;
         }
       });
 
-      // **3. 处理每一行：按 X 坐标排序并拼接文本**
-      let lineNumber = 1;
-      Object.keys(lineGroups)
-        .map(Number) // 将字符串数组转换为数字数组
-        .sort((a, b) => b - a) // 🔥 按 Y 坐标降序排列
-        .forEach((lineY) => {
-          const line = lineGroups[lineY]
-            .sort((a, b) => a.x - b.x) // 按 X 坐标排序
-            .map((item) => item.text)
-            .join(' ');
-
-          lines.push({ lineNumber, text: line });
-          pageText += line + '\n';
-          lineNumber++;
-        });
-
       result.pages.push({
         pageNumber: i + 1,
-        text: pageText.trim(), // ✅ 存储整页文本内容
-        lines,
+        text: pageText.trim(), // 存储整页文本内容
+        lines, // 保存按行提取的文本
       });
 
       result.content += pageText.trim() + '\n';
