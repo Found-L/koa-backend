@@ -48,7 +48,6 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
       throw new Error('Unsupported file type for HTML parsing');
     }
 
-    const htmlFileName = path.basename(filePath);
     const fileBuffer = await readFileWithEncoding(filePath); // 读取文件内容
 
     const $ = cheerio.load(fileBuffer);
@@ -164,8 +163,6 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
 
 
     return {
-      fileName: htmlFileName,
-      mimeType,
       pages,
       content: content.join('\n\n') // 合并文本和表格内容
     };

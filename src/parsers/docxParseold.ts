@@ -10,7 +10,6 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
       throw new Error('不支持的文件类型，无法解析 Word 文件');
     }
 
-    const wordFileName = path.basename(filePath.replace(/^.*?_(.*)$/, '$1'));
     const fileBuffer = await fs.readFile(filePath);
 
     // 使用 Mammoth 提取 DOCX 文件中的原始文本
@@ -62,8 +61,6 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
     }
 
     return {
-      fileName: wordFileName,
-      mimeType,
       pages: pages,
       content: content,
     };

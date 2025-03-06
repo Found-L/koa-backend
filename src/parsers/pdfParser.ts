@@ -10,7 +10,6 @@ export async function parsePdfFile(filePath: string, mimeType: string): Promise<
       throw new Error('Unsupported file type for PDF parsing');
     }
 
-    const pdfFileName = path.basename(filePath.replace(/^.*?_(.*)$/, '$1'));
     const fileBuffer = await fs.readFile(filePath);
 
     // ✅ 解决方案：将 Buffer 转换为 Uint8Array
@@ -25,8 +24,6 @@ export async function parsePdfFile(filePath: string, mimeType: string): Promise<
     const pdfData = await loadingTask.promise;
 
     const result: ParsedContent = {
-      fileName: pdfFileName,
-      mimeType,
       pages: [],
       content: '',
     };

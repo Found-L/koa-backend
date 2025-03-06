@@ -12,7 +12,6 @@ export async function parseMarkdownFile(filePath: string, mimeType: string): Pro
       throw new Error('Unsupported file type for markdown parsing');
     }
 
-    const markdownFileName = path.basename(filePath.replace(/^.*?_(.*)$/, '$1'));
     const markdownContent = await fs.readFile(filePath, 'utf-8');
 
     // 使用 remark 解析 Markdown 内容
@@ -54,8 +53,6 @@ export async function parseMarkdownFile(filePath: string, mimeType: string): Pro
     });
 
     return {
-      fileName: markdownFileName,
-      mimeType,
       pages: pages,
       content: parsed.toString(),
     };

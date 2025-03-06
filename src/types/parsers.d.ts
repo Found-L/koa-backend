@@ -1,8 +1,9 @@
 // src/types/parsers.d.ts
 declare global {
   interface ParsedContent {
-    fileName: string;
-    mimeType: string;
+    fileName?: string;
+    filePath?: string;
+    mimeType?: string;
     pages: PageContent[];
     content: string;
   }

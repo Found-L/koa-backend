@@ -24,6 +24,7 @@ import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
 export async function parseFile(filePath: string, mimeType: string): Promise<ParsedContent | string> {
     try {
         const result: ParsedContent = {
+            filePath,
             fileName: filePath.replace(/^.*?_(.*)$/, '$1'), // Get the file name from the path
             mimeType,
             pages: [],
@@ -32,33 +33,48 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
 
         // 处理 TXT 文件
         if (mimeType === 'text/plain') {
-            const txtResult = await parseTextFile(filePath, mimeType); // 调用独立的 PDF 解析方法
-            return txtResult;
+            const txtResult = await parseTextFile(filePath, mimeType); // 调用独立的 TXT 解析方法
+            return {
+                ...result,
+                ...txtResult
+            };
         }
 
         // 处理 PDF 文件
         if (mimeType === 'application/pdf') {
             const pdfResult = await parsePdfFile(filePath, mimeType); // 调用独立的 PDF 解析方法
-            return pdfResult;
+            return {
+                ...result,
+                ...pdfResult
+            };
         }
 
         // 处理 DOCX 文件
         if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            const docxResult = await parseWordFile(filePath, mimeType); // 调用独立的 PDF 解析方法
-            return docxResult;
+            const docxResult = await parseWordFile(filePath, mimeType); // 调用独立的 DOCX 解析方法
+            return {
+                ...result,
+                ...docxResult
+            };
         }
 
         // 处理 Markdown 文件
         if (mimeType === 'text/markdown') {
         // if (mimeType === 'application/octet-stream') {
-            const mdResult = await parseMarkdownFile(filePath, mimeType); // 调用独立的 PDF 解析方法
-            return mdResult;
+            const mdResult = await parseMarkdownFile(filePath, mimeType); // 调用独立的 Markdown 解析方法
+            return {
+                ...result,
+                ...mdResult
+            };
         }
 
         // 处理 HTML 文件
         if (mimeType === 'text/html') {
-            const htmlResult = await parseHtmlFile(filePath, mimeType); // 调用独立的 PDF 解析方法
-            return htmlResult;
+            const htmlResult = await parseHtmlFile(filePath, mimeType); // 调用独立的 HTML 解析方法
+            return {
+                ...result,
+                ...htmlResult
+            };
         }
 
         // // 处理 XLSX 和 XLS 文件

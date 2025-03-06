@@ -12,7 +12,6 @@ export async function parseTextFile(filePath: string, mimeType: string): Promise
       throw new Error('Unsupported file type for text parsing');
     }
 
-    const textFileName = path.basename(filePath.replace(/^.*?_(.*)$/, '$1'));
     const fileBuffer = await fs.readFile(filePath);
 
     // 检测编码
@@ -54,8 +53,6 @@ export async function parseTextFile(filePath: string, mimeType: string): Promise
     });
 
     return {
-      fileName: textFileName,
-      mimeType,
       pages,
       content: fileContent,
     };

@@ -10,9 +10,6 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
       throw new Error('不支持的文件类型，无法解析 Word 文件');
     }
 
-    // 提取文件名
-    const wordFileName = path.basename(filePath.replace(/^.*?_(.*)$/, '$1'));
-
     // 使用 docx4js 加载 DOCX 文件
     const docx = await docx4js.load(filePath);
 
@@ -121,8 +118,6 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
 
     // 返回解析后的内容
     return {
-      fileName: wordFileName,
-      mimeType,
       pages: pages,
       content: content,
     };
