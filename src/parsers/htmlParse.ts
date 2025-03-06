@@ -17,7 +17,6 @@ async function readFileWithEncoding(filePath: string): Promise<string> {
 
   // 自动检测编码
   const detectedEncoding = chardet.detect(buffer);
-  console.log(`Detected encoding: ${detectedEncoding}`);
 
   let encoding = detectedEncoding?.toLowerCase() || 'utf-8';
 
@@ -59,9 +58,6 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
     // 直接获取 body
     const body = $('body');
 
-    const bodyText = body.text().trim();
-    console.log('Body text:', bodyText); // 这里应该输出 body 里的纯文本
-
     if (!body.length) {
       throw new Error('No <body> tag found in HTML file');
     }
@@ -84,7 +80,6 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
         const text = element.data.trim();
         if (text && !extractedTexts.has(text)) {
           extractedTexts.add(text);
-          console.log('Text:', text);  // 处理文本
           content.push(text);  // 保存文本到 content 中
           pageText.push(text.trim());  // 保存表格行内容到 pageText 中
           lines.push({ lineNumber, text: text.trim() });  // 保存表格行内容到 lines 中
@@ -119,7 +114,6 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
           pageText.push(rowMarkdown.trim());  // 保存表格行内容到 pageText 中
           lines.push({ lineNumber, text: rowMarkdown.trim() });  // 保存表格行内容到 lines 中
           lineNumber++;
-          console.log('rowMarkdown', rowMarkdown);  // 输出为 Markdown 表格格式
         }
         return;  // 如果是表格元素则跳过递归子元素
       }
@@ -141,8 +135,6 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
           });
           if (inlineText.trim()) {
             extractedTexts.add(inlineText.trim())
-            console.log('Inline text:', lines[lines.length - 1]);  // 输出合并后的行内文本
-
             content[content.length - 1] += inlineText.trim();  // 将合并后的行内文本添加到 content 中
             pageText[pageText.length - 1] += inlineText.trim();  // 保存表格行内容到 pageText 中
             lines[lines.length - 1].text += inlineText.trim();  // 保存表格行内容到 lines 中
