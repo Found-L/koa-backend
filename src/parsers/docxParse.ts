@@ -29,35 +29,43 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
       } else if (node.name === 'w:tbl') {
         // 处理表格节点
         const table: TableRowContent[] = [];
-        node.children.forEach((rowNode: any) => {
+
+        const extractTextFromNode = (node: any): string => {
+          if (node.name === 'w:t' && node.children?.[0]?.data) {
+            return node.children[0].data;
+          }
+          return '';
+        };
+
+        const extractCellContent = (cellNode: any): TableCellContent => {
+          let cellText = '';
+
+          cellNode.children?.forEach((cellContentNode: any) => {
+            if (cellContentNode.name === 'w:p') {
+              cellContentNode.children?.forEach((paragraphNode: any) => {
+                if (paragraphNode.name === 'w:r') {
+                  paragraphNode.children?.forEach((textNode: any) => {
+                    cellText += extractTextFromNode(textNode);
+                  });
+                }
+              });
+            }
+          });
+
+          return { text: cellText.trim() };
+        };
+
+        const extractRowContent = (rowNode: any): TableRowContent => {
+          const row: TableCellContent[] = rowNode.children
+            ?.filter((cellNode: any) => cellNode.name === 'w:tc')
+            .map(extractCellContent);
+
+          return { cells: row };
+        };
+
+        node.children?.forEach((rowNode: any) => {
           if (rowNode.name === 'w:tr') {
-            const row: TableCellContent[] = [];
-            rowNode.children.forEach((cellNode: any) => {
-              if (cellNode.name === 'w:tc') {
-                let cellText = '';
-                // 遍历单元格内容
-                cellNode.children.forEach((cellContentNode: any) => {
-                  if (cellContentNode.name === 'w:p') {
-                    // 遍历段落内容
-                    cellContentNode.children.forEach((paragraphNode: any) => {
-                      if (paragraphNode.name === 'w:r') {
-                        // 遍历文本运行内容
-                        paragraphNode.children.forEach((textNode: any) => {
-                          if (textNode.name === 'w:t') {
-                            if (textNode.children && textNode.children[0].data) {
-                              // 提取文本内容
-                              cellText += textNode.children[0].data;
-                            }
-                          }
-                        });
-                      }
-                    });
-                  }
-                });
-                row.push({ text: cellText.trim() }); // 将单元格文本添加到行中
-              }
-            });
-            table.push({ cells: row }); // 将行添加到表格中
+            table.push(extractRowContent(rowNode));
           }
         });
 
