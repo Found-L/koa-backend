@@ -32,6 +32,16 @@ async function readFileWithEncoding(filePath: string): Promise<string> {
   return content;
 }
 
+// 判断元素是否为行内元素的函数
+function isInlineElement(element: cheerio.Element): boolean {
+  // 默认认为是行内元素
+  if (element.type === 'tag') {
+    const inlineElements = ['span', 'a', 'b', 'i', 'strong', 'em', 'abbr', 'img']; // 行内元素的常见标签
+    return inlineElements.includes(element.name);
+  }
+  return false;
+}
+
 // 解析 HTML 文件
 export async function parseHtmlFile(filePath: string, mimeType: string): Promise<ParsedContent> {
   try {
@@ -78,7 +88,7 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
           content.push(text);  // 保存文本到 content 中
           pageText.push(text.trim());  // 保存表格行内容到 pageText 中
           lines.push({ lineNumber, text: text.trim() });  // 保存表格行内容到 lines 中
-          lineNumber++;
+          // lineNumber++;
         }
         return;  // 文本节点结束，不继续遍历
       }
@@ -114,10 +124,34 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
         return;  // 如果是表格元素则跳过递归子元素
       }
 
-      // 如果是标签节点，递归处理其子节点
-      if (element.type === 'tag' || element.type === 'script' || element.type === 'style') {
-        // 处理标签节点的子节点
+       // 如果是标签节点，递归处理其子节点
+      if (element.type === 'tag') {
         const tagElement = element as cheerio.TagElement;
+
+        // 如果是行内元素，将其子元素合并为一行文本
+        if (isInlineElement(element)) {
+          let inlineText = '';
+          tagElement.children?.forEach((child) => {
+            if (child.type === 'text') {
+              const text = (child as cheerio.TextElement).data?.trim();
+              if (text) {
+                inlineText += ` ${text}`;  // 将文本合并到一行
+              }
+            }
+          });
+          if (inlineText.trim()) {
+            extractedTexts.add(inlineText.trim())
+            console.log('Inline text:', lines[lines.length - 1]);  // 输出合并后的行内文本
+
+            content[content.length - 1] += inlineText.trim();  // 将合并后的行内文本添加到 content 中
+            pageText[pageText.length - 1] += inlineText.trim();  // 保存表格行内容到 pageText 中
+            lines[lines.length - 1].text += inlineText.trim();  // 保存表格行内容到 lines 中
+          }
+        } else {
+          lineNumber++;
+        }
+
+        // 递归遍历子元素
         tagElement.children?.forEach((child) => {
           extractTextRecursively(child);
         });
