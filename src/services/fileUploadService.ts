@@ -17,7 +17,7 @@ import { parseDocFile } from '../parsers/docParse'; // 导入 Word 解析方法
 import { parseTextFile } from '../parsers/txtParse'; // 导入 txt 解析方法
 import { parseMarkdownFile } from '../parsers/mdParse'; // 导入 Markdown 解析方法
 import { parseHtmlFile } from '../parsers/htmlParse'; // 导入 HTML 解析方法
-
+import { parseXlsxFile } from '../parsers/xlsxParse'; // 导入 xls xlsx 解析方法
 
 import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
 
@@ -86,16 +86,15 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
             };
         }
 
-        // // 处理 XLSX 和 XLS 文件
-        // if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-        //     mimeType === 'application/vnd.ms-excel') {
-        //     const data = await fs.readFile(filePath);
-        //     const workbook = xlsx.read(data, { type: 'buffer' });
-        //     const sheetName = workbook.SheetNames[0]; // 获取第一个 sheet
-        //     const sheet = workbook.Sheets[sheetName];
-        //     const json = xlsx.utils.sheet_to_json(sheet);
-        //     return JSON.stringify(json, null, 2); // 将内容返回为 JSON 格式
-        // }
+        // 处理 XLSX 和 XLS 文件
+        if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+            mimeType === 'application/vnd.ms-excel') {
+            const xlsxResult = await parseXlsxFile(filePath, mimeType); // 调用独立的 HTML 解析方法
+            return {
+                ...result,
+                ...xlsxResult
+            };
+        }
 
         // // 处理 CSV 文件
         // if (mimeType === 'text/csv') {

@@ -7,8 +7,8 @@ const allowedMimeTypes = [
     'text/plain', // TXT
     'text/markdown', // MARKDOWN, MD
     // 'application/octet-stream', // 二进制流格式  (一些特殊格式支持上传)  例如markdown 格式不识别
-    // 'application/vnd.ms-excel', // XLS
-    // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
+    'application/vnd.ms-excel', // XLS
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
     'application/pdf', // PDF
     'text/html', // HTML
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
