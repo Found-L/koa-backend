@@ -42,14 +42,16 @@ src/
 
 ### 文件解析相关
 
-- `pdf-parse`：解析 PDF
-- `mammoth`：解析 DOCX
+- `pdfjs-dist` & `pdf-lib`：解析 PDF
+- `docx4js`：解析 DOCX
+- `word-extractor`：解析 DOC
 - `xlsx`：解析 Excel
 - `xml2js`：解析 XML
 - `csv-parse`：解析 CSV
-- `remark-parse` & `remark-stringify`：解析 Markdown
+- `remark-parse` & `remark-rehype` & `rehype-stringify`：解析 Markdown
 - `mailparser`：解析 EML 和 MSG
 - `epub2`：解析 EPUB
+- `iconv-lite`：解析 PDF
 
 ## 安装与运行
 

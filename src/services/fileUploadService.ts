@@ -3,7 +3,6 @@
 import fs from 'fs/promises';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
-import remarkStringify from 'remark-stringify';
 import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import xlsx from 'xlsx';
