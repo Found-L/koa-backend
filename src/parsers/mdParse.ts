@@ -14,12 +14,15 @@ export async function parseMarkdownFile(filePath: string, mimeType: string): Pro
 
     const markdownContent = await fs.readFile(filePath, 'utf-8');
 
+    // 先处理格式符号如删除线、上标、下标和高亮
+    const processedContent = processMarkdownFormatting(markdownContent);
+
     // 使用 remark 解析 Markdown 内容
     const parsed = await unified()
       .use(remarkParse)
       .use(remarkRehype)  // 使用 remark-rehype 插件解析 HTML
       .use(rehypeStringify)  // 将 HTML 转换成字符串
-      .process(markdownContent);
+      .process(processedContent);
 
     const htmlContent = parsed.toString();
 
@@ -72,4 +75,21 @@ export async function parseMarkdownFile(filePath: string, mimeType: string): Pro
 function extractTextFromHtml(html: string): string {
   const regex = /<[^>]+>/g;  // 匹配 HTML 标签
   return html.replace(regex, '').trim();  // 删除 HTML 标签，提取纯文本
+}
+
+// 处理 Markdown 格式化符号，如上标、下标、删除线、下划线、高亮等
+function processMarkdownFormatting(markdown: string): string {
+  // // 上标（^）
+  // markdown = markdown.replace(/\^([^^]+)\^/g, '<sup>$1</sup>');
+
+  // // 下标（~）
+  // markdown = markdown.replace(/~([^~]+)~/g, '<sub>$1</sub>');
+
+  // 删除线（~~）
+  markdown = markdown.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+
+  // 高亮（==）
+  markdown = markdown.replace(/==([^=]+)==/g, '<mark>$1</mark>');
+
+  return markdown;
 }
