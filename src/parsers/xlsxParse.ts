@@ -70,7 +70,9 @@ export async function parseXlsxFile(filePath: string, mimeType: string): Promise
       filteredData.forEach((row, rowIndex) => {
         const markdownRow = row.map((cell, colIndex) => {
           const content = String(cell ?? mergedCellsMap.get(`${rowIndex}-${colIndex}`) ?? "").trim();
-          return ` ${content.padEnd(columnWidths[colIndex])} `;
+          // 处理单元格中的换行符，保留内容整体
+          const formattedContent = content.replace(/\n/g, ' ').trim(); // 用空格替换换行符
+          return ` ${formattedContent.padEnd(columnWidths[colIndex])} `;
         });
 
         markdownTable.push(`|${markdownRow.join("|")}|`);
