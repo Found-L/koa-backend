@@ -14,6 +14,7 @@ import epub from 'epub2';
 
 import { parsePdfFile } from '../parsers/pdfParser';  // 引入 pdf 解析方法
 import { parseWordFile } from '../parsers/docxParse'; // 导入 Word 解析方法
+import { parseDocFile } from '../parsers/docParse'; // 导入 Word 解析方法
 import { parseTextFile } from '../parsers/txtParse'; // 导入 txt 解析方法
 import { parseMarkdownFile } from '../parsers/mdParse'; // 导入 Markdown 解析方法
 import { parseHtmlFile } from '../parsers/htmlParse'; // 导入 HTML 解析方法
@@ -55,6 +56,15 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
             return {
                 ...result,
                 ...docxResult
+            };
+        }
+
+        // 处理 DOC 文件
+        if (mimeType === 'application/msword') {
+            const docResult = await parseDocFile(filePath, mimeType); // 调用独立的 DOC 解析方法
+            return {
+                ...result,
+                ...docResult
             };
         }
 
