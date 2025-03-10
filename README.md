@@ -51,14 +51,14 @@ src/
 - `remark-parse` & `remark-rehype` & `rehype-stringify`：解析 Markdown
 - `mailparser`：解析 EML 和 MSG
 - `epub2`：解析 EPUB
-- `iconv-lite`：解析 PDF
+- `iconv-lite`：编码/解码
 
 ## 安装与运行
 
 1. 克隆项目
 
     ```sh
-    git clone <https://github.com/your-repo/koa-backend.git>
+    git clone <https://github.com/Found-L/koa-backend.git>
     cd koa-backend
     ```
 

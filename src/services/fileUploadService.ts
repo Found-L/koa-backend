@@ -1,11 +1,7 @@
 // src/utils/fileParser.ts
 
 import fs from 'fs/promises';
-import { unified } from 'unified';
 import remarkParse from 'remark-parse';
-import cheerio from 'cheerio';
-import iconv from 'iconv-lite';
-import xlsx from 'xlsx';
 import csvParse from 'csv-parse';
 import { simpleParser } from 'mailparser';
 import { parseStringPromise } from 'xml2js';
@@ -18,6 +14,8 @@ import { parseTextFile } from '../parsers/txtParse'; // 导入 txt 解析方法
 import { parseMarkdownFile } from '../parsers/mdParse'; // 导入 Markdown 解析方法
 import { parseHtmlFile } from '../parsers/htmlParse'; // 导入 HTML 解析方法
 import { parseXlsxFile } from '../parsers/xlsxParse'; // 导入 xls xlsx 解析方法
+import { parseXmlFile } from '../parsers/xmlParse'; // 导入 xml 解析方法
+import { parseJsonFile } from '../parsers/jsonParse'; // 导入 json 解析方法
 
 import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
 
@@ -121,12 +119,14 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
         //     return 'MSG file parsing not implemented';
         // }
 
-        // // 处理 XML 文件
-        // if (mimeType === 'application/xml') {
-        //     const data = await fs.readFile(filePath, 'utf-8');
-        //     const parsed = await parseStringPromise(data);
-        //     return JSON.stringify(parsed, null, 2); // 将 XML 转换为 JSON 字符串
-        // }
+        // 处理 XML 文件
+        if (mimeType === 'application/xml' || mimeType === 'text/xml') {
+            const xmlResult = await parseXmlFile(filePath, mimeType); // 调用独立的 xml 解析方法
+            return {
+                ...result,
+                ...xmlResult
+            };
+        }
 
         // // 处理 EPUB 文件
         // if (mimeType === 'application/epub+zip') {
@@ -139,6 +139,15 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
         // if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
         //     return 'PPTX file parsing not implemented'; // 需要特定库解析 PPTX 文件
         // }
+
+        // 处理 JSON 文件
+        if (mimeType === 'application/json') {
+            const jsonResult = await parseJsonFile(filePath, mimeType); // 调用独立的 xml 解析方法
+            return {
+                ...result,
+                ...jsonResult
+            };
+        }
 
         // 如果文件类型不支持
         return 'Unsupported file type';

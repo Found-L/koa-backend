@@ -15,12 +15,12 @@ const allowedMimeTypes = [
     'application/msword', // DOC
     // 'application/vnd.ms-powerpoint', // PPT
     // 'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PPTX
-    // 'application/xml', // XML
     // 'application/epub+zip', // EPUB
     // 'message/rfc822', // EML
     // 'application/vnd.ms-outlook', // MSG
     // 'text/csv', // CSV
-    // 'application/xml', // XML
+    'application/xml', // XML
+    'text/xml', // XML
     // 'application/zip', // ZIP (一些压缩格式支持上传)
     'application/json', // JSON
 ];
