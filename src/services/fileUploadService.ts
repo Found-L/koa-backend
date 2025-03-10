@@ -4,7 +4,6 @@ import fs from 'fs/promises';
 import remarkParse from 'remark-parse';
 import csvParse from 'csv-parse';
 import { simpleParser } from 'mailparser';
-import { parseStringPromise } from 'xml2js';
 import epub from 'epub2';
 
 import { parsePdfFile } from '../parsers/pdfParser';  // 引入 pdf 解析方法
@@ -16,6 +15,7 @@ import { parseHtmlFile } from '../parsers/htmlParse'; // 导入 HTML 解析方�
 import { parseXlsxFile } from '../parsers/xlsxParse'; // 导入 xls xlsx 解析方法
 import { parseXmlFile } from '../parsers/xmlParse'; // 导入 xml 解析方法
 import { parseJsonFile } from '../parsers/jsonParse'; // 导入 json 解析方法
+import { parsePptFile } from '../parsers/pptParse'; // 导入 PPT 解析方法
 
 import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
 
@@ -136,9 +136,13 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
         // }
 
         // 处理 PPTX 文件
-        // if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
-        //     return 'PPTX file parsing not implemented'; // 需要特定库解析 PPTX 文件
-        // }
+        if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+            const pptResult = await parsePptFile(filePath, mimeType); // 调用独立的 xml 解析方法
+            return {
+                ...result,
+                ...pptResult
+            };
+        }
 
         // 处理 JSON 文件
         if (mimeType === 'application/json') {

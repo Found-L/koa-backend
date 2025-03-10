@@ -13,8 +13,8 @@ const allowedMimeTypes = [
     'text/html', // HTML
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
     'application/msword', // DOC
-    // 'application/vnd.ms-powerpoint', // PPT
-    // 'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PPTX
+    'application/vnd.ms-powerpoint', // PPT
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PPTX
     // 'application/epub+zip', // EPUB
     // 'message/rfc822', // EML
     // 'application/vnd.ms-outlook', // MSG

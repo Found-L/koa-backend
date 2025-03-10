@@ -1,3 +1,5 @@
+// src/parsers/xmlParse.ts
+
 import fs from 'fs/promises';
 import { parseStringPromise } from 'xml2js';
 
