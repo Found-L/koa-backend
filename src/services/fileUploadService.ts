@@ -16,6 +16,7 @@ import { parseXlsxFile } from '../parsers/xlsxParse'; // 导入 xls xlsx 解析�
 import { parseXmlFile } from '../parsers/xmlParse'; // 导入 xml 解析方法
 import { parseJsonFile } from '../parsers/jsonParse'; // 导入 json 解析方法
 import { parsePptFile } from '../parsers/pptParse'; // 导入 PPT 解析方法
+import { parsePptxFile } from '../parsers/pptxParse'; // 导入 PPT 解析方法
 
 import ParsedContent  from '../types/parsers'; // 导入 ParsedContent 类型
 
@@ -137,6 +138,15 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
 
         // 处理 PPTX 文件
         if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+            const pptxResult = await parsePptxFile(filePath, mimeType); // 调用独立的 xml 解析方法
+            return {
+                ...result,
+                ...pptxResult
+            };
+        }
+
+        // 处理 PPT 文件
+        if (mimeType === 'application/vnd.ms-powerpoint') {
             const pptResult = await parsePptFile(filePath, mimeType); // 调用独立的 xml 解析方法
             return {
                 ...result,

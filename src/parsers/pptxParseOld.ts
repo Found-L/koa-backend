@@ -4,7 +4,7 @@ import officeParser from 'officeparser';
 
 export async function parsePptFile(filePath: string, mimeType: string, linesPerPage: number = 10): Promise<ParsedContent> {
   try {
-    if (mimeType !== 'application/vnd.ms-powerpoint') {
+    if (mimeType !== 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
       throw new Error('不支持的文件类型，无法解析 PPTX 文件');
     }
 
