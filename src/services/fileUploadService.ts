@@ -137,16 +137,16 @@ export async function parseFile(filePath: string, mimeType: string): Promise<Par
         // }
 
         // 处理 PPTX 文件
-        if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
-            const pptxResult = await parsePptxFile(filePath, mimeType); // 调用独立的 xml 解析方法
-            return {
-                ...result,
-                ...pptxResult
-            };
-        }
+        // if (mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+        //     const pptxResult = await parsePptxFile(filePath, mimeType); // 调用独立的 xml 解析方法
+        //     return {
+        //         ...result,
+        //         ...pptxResult
+        //     };
+        // }
 
         // 处理 PPT 文件
-        if (mimeType === 'application/vnd.ms-powerpoint') {
+        if (['application/vnd.ms-powerpoint',"application/vnd.openxmlformats-officedocument.presentationml.presentation"].includes(mimeType)) {
             const pptResult = await parsePptFile(filePath, mimeType); // 调用独立的 xml 解析方法
             return {
                 ...result,

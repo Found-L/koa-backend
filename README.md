@@ -46,6 +46,7 @@ src/
 - `docx4js`：解析 DOCX
 - `word-extractor`：解析 DOC
 - `xlsx`：解析 Excel
+- `ppt-parser`：解析 PPTX PPT
 - `xml2js`：解析 XML
 - `csv-parse`：解析 CSV
 - `remark-parse` & `remark-rehype` & `rehype-stringify`：解析 Markdown
