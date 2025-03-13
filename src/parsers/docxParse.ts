@@ -14,15 +14,30 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
 
     // 提取 DOCX 文件中的文本内容和表格
     let content = '';
+    let lastRunParent: any = null; // 记录上一个 `w:t` 所属的 `w:r` 父节点
 
     // 遍历文档内容
     docx.officeDocument.content('w\\:t, w\\:tbl').each((index: number, node: any) => {
       if (node.name === 'w:t' && !isInsideTable(node)) {
         // 处理文本节点
         if (node.children && node.children.length > 0 && node.children[0].data) {
-          content += node.children[0].data + '\n'; // 提取文本内容
+          const text = node.children[0].data;
+          const currentRunParent = node.parent?.parent; // 获取 `w:r` 父级
+          if (lastRunParent === currentRunParent) {
+            // 如果当前 `w:t` 和上一个 `w:t` 属于同一个 `w:r`，拼接
+            content += text;
+          } else {
+            // 否则，换行并添加新文本
+            content += (content ? '\n' : '') + text;
+          }
+
+          lastRunParent = currentRunParent; // 更新最近的 `w:r` 父节点
         }
       } else if (node.name === 'w:tbl') {
+        if (!content.endsWith('\n')) {
+          content += '\n'; // 确保表格前有换行
+        }
+
         // 处理表格节点
         const table: TableRowContent[] = [];
 
