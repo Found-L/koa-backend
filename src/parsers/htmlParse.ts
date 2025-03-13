@@ -102,9 +102,16 @@ export async function parseHtmlFile(filePath: string, mimeType: string): Promise
               }
             } else if (child.type === 'tag') {
               // 处理标签元素 (如 td 或 th)
-              const cellText = (child as cheerio.TagElement).children
-                .map((subChild) => (subChild.type === 'text' ? (subChild as cheerio.TextElement).data?.trim() : ''))
-                .join('');  // 获取所有子文本
+              const cellText = child.children
+              .map((subChild) => {
+                // 检查 subChild 是 cheerio.TextElement 类型
+                if ((subChild as cheerio.TextElement).type === "text") {
+                  const textSubChild = subChild as cheerio.TextElement;
+                  return textSubChild.data?.trim() ?? ""; // 防止 undefined 或 null 的情况
+                }
+                return "";
+              })
+              .join(""); // 获取所有子文本
               rowMarkdown += ` ${cellText} |`;
             }
           });

@@ -41,7 +41,10 @@ export async function parseWordFile(filePath: string, mimeType: string, linesPer
         // 处理表格节点
         const table: TableRowContent[] = [];
 
-        const extractTextFromNode = (node: any): string => {
+        const extractTextFromNode = (node: {
+          name: string;
+          children?: { data: string }[];
+        }): string => {
           if (node.name === 'w:t' && node.children?.[0]?.data) {
             return node.children[0].data;
           }

@@ -4,10 +4,12 @@ import fs from 'fs';
 import { parse } from 'ppt-parser';
 
 import * as cheerio from 'cheerio';
+
 // 解析 HTML 并提取文本
 export function extractTextFromHtml(html: string): string {
   const $ = cheerio.load(html);
-  return $('body').text().trim().replace(/\s+/g, ' ');  // 去除多余空格和换行
+  const text = $("body").text().trim().replace(/\s+/g, " "); // 去除多余空格和换行
+  return text; // 去除多余空格和换行
 }
 
 export async function parsePptFile(filePath: string, mimeType: string): Promise<ParsedContent> {
